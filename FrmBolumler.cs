@@ -1,0 +1,110 @@
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
+using System.Drawing;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows.Forms;
+using System.Data.SqlClient;
+
+namespace YurtkayıtSistemi
+{
+    public partial class FrmBolumler : Form
+    {
+        public FrmBolumler()
+        {
+            InitializeComponent();
+        }
+
+        sqlbaglanti bgl = new sqlbaglanti();
+        private void FrmBolumler_Load(object sender, EventArgs e)
+        {
+            // TODO: This line of code loads data into the 'yurtkayıtDataSet.Bolum' table. You can move, or remove it, as needed.
+            this.bolumTableAdapter.Fill(this.yurtkayıtDataSet.Bolum);
+
+        }
+
+        private void label2_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void textBox2_TextChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void pcbBolumEkle_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                SqlCommand komut1 = new SqlCommand("insert into Bolum(BolumAd) values(@p1)", bgl.baglanti());
+                komut1.Parameters.AddWithValue("@p1", TxtBolumAd.Text);
+                komut1.ExecuteNonQuery();
+                bgl.baglanti().Close();
+                MessageBox.Show("Bölüm Eklendi");
+                this.bolumTableAdapter.Fill(this.yurtkayıtDataSet.Bolum);
+            }
+            catch (Exception)
+            {
+                MessageBox.Show("Hata!! Oluştu Yeniden Deneyin");
+            }
+           
+        }
+
+        private void pcbBolumSil_Click(object sender, EventArgs e)
+        {
+            try
+            {
+               
+                SqlCommand komut2 = new SqlCommand("delete from Bolum where Bolumid=@p1", bgl.baglanti());
+                komut2.Parameters.AddWithValue("@p1", TxtBolumid.Text);
+                komut2.ExecuteNonQuery();
+                bgl.baglanti().Close();
+                MessageBox.Show("Silme işlemi Gerçekleşti");
+                this.bolumTableAdapter.Fill(this.yurtkayıtDataSet.Bolum);
+            }
+            catch
+            {
+
+                MessageBox.Show("Hata! İşlem Gerçekleşmedi");
+            }
+           ;
+        }
+        int secilen;
+        private void dataGridView1_CellContentClick(object sender, DataGridViewCellEventArgs e)
+        {
+            string id, bolumad;
+            secilen = dataGridView1.SelectedCells[0].RowIndex;
+            id = dataGridView1.Rows[secilen].Cells[0].Value.ToString();
+            bolumad = dataGridView1.Rows[secilen].Cells[1].Value.ToString();
+
+            TxtBolumid.Text = id;
+            TxtBolumAd.Text = bolumad;
+
+        }
+
+        private void pcbBolumDüzenle_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                
+                SqlCommand komut2 = new SqlCommand("update Bolum Set BolumAd=@p1 where Bolumid=@p2", bgl.baglanti());
+                komut2.Parameters.AddWithValue("@p2", TxtBolumid.Text);
+                komut2.Parameters.AddWithValue("@p1", TxtBolumAd.Text);
+                komut2.ExecuteNonQuery();
+                bgl.baglanti().Close();
+                MessageBox.Show("Güncelleme Gerçekleşti");
+                this.bolumTableAdapter.Fill(this.yurtkayıtDataSet.Bolum);
+            }
+            catch
+            {
+                MessageBox.Show("Hata!! GÜncelleme Gerçekleşmedi");
+            } 
+            
+
+        }
+    }
+}
